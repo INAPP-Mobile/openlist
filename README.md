@@ -14,7 +14,7 @@ OpenList is a self-hosted file list and file manager — one web interface in fr
 
 ## Deploy and Host
 
-One-click deploy creates a single OpenList service with a persistent volume. No companion database is needed: OpenList stores users, storages, and settings in an embedded SQLite database file on the volume. On first boot the wrapper maps Railway's injected `PORT` onto OpenList's HTTP port, seeds the `admin` account exactly once from the generated deploy password, and pre-creates a `Files` Local storage pointing at `/opt/openlist/data/files` on the volume — so the deploy is usable immediately, with no storage setup before the first upload.
+One-click deploy creates a single OpenList service with a persistent volume. No companion database is needed: OpenList stores users, storages, and settings in an embedded SQLite database file on the volume. On first boot the wrapper maps Railway's injected `PORT` onto OpenList's HTTP port, upstream creates the `admin` account from the generated deploy password (mapped to `OPENLIST_ADMIN_PASSWORD`), and the wrapper pre-creates a `Files` Local storage pointing at `/opt/openlist/data/files` on the volume — so the deploy is usable immediately, with no storage setup before the first upload.
 
 After deploy, open the public URL and sign in as `admin` with the generated `ADMIN_PASSWORD` (find it in your Railway project's variables). Only the admin account exists after deploy; the admin creates additional users from Manage -> Users. The built-in `guest` account ships disabled, so anonymous visitors see nothing.
 
@@ -40,7 +40,7 @@ Only one variable appears on the deploy form, and it is generated:
 
 | Variable | Default | Description |
 | --- | --- | --- |
-| `ADMIN_PASSWORD` | `${{secret(24)}}` | Password for the `admin` account. Generated on deploy; seeded exactly once per volume on first boot. Changing it later does not change the password — change it in the OpenList UI instead (Manage -> Profile). If left empty, the server generates a random password printed in the deploy logs. |
+| `ADMIN_PASSWORD` | `${{secret(24)}}` | Password for the `admin` account. Generated on deploy; upstream creates the admin from it exactly once, on first boot (the wrapper maps it to `OPENLIST_ADMIN_PASSWORD`). Changing it later does not change the password — change it in the OpenList UI instead (Manage -> Profile). If left empty, no admin exists and the first visitor completes the web setup wizard to create one. |
 
 Everything else is baked into the image. Applicable upstream variables and their baked values:
 
@@ -48,7 +48,7 @@ Everything else is baked into the image. Applicable upstream variables and their
 | --- | --- | --- |
 | `PORT` | Railway-injected | OpenList's HTTP port: the wrapper exports it as `HTTP_PORT` on every boot (upstream default is 5244). |
 | `HTTP_PORT` | `$PORT` | The port OpenList binds, derived from Railway's injected `PORT` (upstream reads config from env vars first). |
-| `OPENLIST_ADMIN_PASSWORD` | not set | Upstream's own admin-password env var is deliberately not wired: the wrapper seeds the password exactly once via the upstream CLI instead, so a password changed in the UI is never reset by a redeploy. |
+| `OPENLIST_ADMIN_PASSWORD` | `$ADMIN_PASSWORD` | The wrapper maps the template's `ADMIN_PASSWORD` onto upstream's first-boot admin variable on every boot; upstream creates the admin from it exactly once and ignores it once an admin exists, so a password changed in the UI is never reset by a redeploy. The upstream `openlist admin set` CLI is not used for seeding: on a fresh volume no admin exists yet, so it fails silently with exit code 0. |
 | `TZ` | `UTC` (container default) | Add `TZ` as a custom service variable if you want local timestamps; the Go binary honors it. |
 | Data directory | `/opt/openlist/data` | The single Railway volume: `config.json`, `data.db` (SQLite: users, storages, settings), and the `files/` local storage root. |
 | WebDAV | `/dav` | Built-in WebDAV server on the same port, same login as the web UI. |

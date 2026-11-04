@@ -18,13 +18,19 @@
 #   config.json, data.db (users, storages, settings) and the local
 #   storage root /opt/openlist/data/files. Railway allows one volume
 #   per service, so the file root lives inside the data volume.
-# - ADMIN: there is no setup wizard; the server creates `admin` with
-#   a random password on first boot. entrypoint.sh seeds it exactly
-#   once per volume from ADMIN_PASSWORD (the generated template
-#   variable) via the upstream `openlist admin set` CLI, marker-gated
-#   so a password changed later in the UI is never reset by a
-#   redeploy. If ADMIN_PASSWORD is unset, the server keeps its
-#   generated password (printed in the deploy logs).
+# - ADMIN: there is no setup wizard when a password is provided:
+#   upstream creates the `admin` account itself on first boot from
+#   OPENLIST_ADMIN_PASSWORD (verified in
+#   internal/bootstrap/data/user.go: when no admin user exists, the
+#   server creates one from that variable; once an admin exists the
+#   variable is ignored, so a password changed in the UI is never
+#   reset by a redeploy). entrypoint.sh therefore maps the
+#   template's ADMIN_PASSWORD onto OPENLIST_ADMIN_PASSWORD on
+#   every boot. Without it, first boot creates no admin and the
+#   web setup wizard (POST /api/public/init/setup) owns admin
+#   creation instead. The upstream `openlist admin set` CLI is
+#   deliberately NOT used for seeding: on a fresh volume no admin
+#   exists yet, so it fails silently with exit code 0.
 # - STORAGE: entrypoint.sh also creates a `Files` Local storage
 #   (mount /Files, root /opt/openlist/data/files) exactly once per
 #   volume via the admin API, best-effort — a failed seed never
