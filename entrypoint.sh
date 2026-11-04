@@ -95,7 +95,10 @@ if [ ! -f "$STORAGE_MARKER" ] && [ -n "${ADMIN_PASSWORD:-}" ]; then
   TOKEN=$(wget -q -O - --header="Content-Type: application/json" --post-data="$LOGIN_JSON" "http://127.0.0.1:${PORT_VALUE}/api/auth/login" 2>/dev/null | sed -n 's/.*"token":"\([^"]*\)".*/\1/p')
   if [ -n "$TOKEN" ]; then
     ADDITION='{\"root_folder_path\": \"/opt/openlist/data/files\"}'
-    STORAGE_JSON="{\"mount_path\": \"/Files\", \"order\": 0, \"driver\": \"Local\", \"cache_expiration\": 30, \"status\": 1, \"addition\": \"$ADDITION\", \"remark\": \"Local files on the Railway volume (created by the template on first boot).\", \"disabled\": false, \"enable_sign\": false}"
+    STORAGE_JSON="{\"mount_path\": \"/Files\", \"order\": 0, \"driver\": \"Local\", \"cache_expiration\": 30, \"addition\": \"$ADDITION\", \"remark\": \"Local files on the Railway volume (created by the template on first boot).\", \"disabled\": false, \"enable_sign\": false}"
+    # NOTE: model.Storage.Status is a string in v4 (not an int) —
+    # sending \"status\": 1 fails binding with 400, so it is omitted
+    # here; the server computes the status on load.
     RESP=$(wget -q -O - --header="Authorization: $TOKEN" --header="Content-Type: application/json" --post-data="$STORAGE_JSON" "http://127.0.0.1:${PORT_VALUE}/api/admin/storage/create" 2>/dev/null)
     echo "OpenList: storage create response: $RESP"
     case "$RESP" in
