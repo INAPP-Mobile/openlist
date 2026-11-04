@@ -1,4 +1,4 @@
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/deploy/openlist?utm_campaign=openlist)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/deploy/openlist-1?utm_campaign=openlist-1)
 
 ![OpenList upload dialog](https://raw.githubusercontent.com/INAPP-Mobile/openlist/main/assets/openlist-upload.png)
 

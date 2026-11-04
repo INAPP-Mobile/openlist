@@ -2,7 +2,7 @@
 
 OpenList is a self-hosted file list and file manager — one web interface in front of local disk, S3 buckets, SFTP and SMB shares, WebDAV servers, and dozens of cloud drives (Google Drive, OneDrive, Dropbox, and more). It is the community-run AGPL-3.0 fork of AList, actively developed after AList's mid-2025 sale, with the same Go backend and web UI. Deploy it on Railway and your files stay on your own volume and your own storage accounts, not a third-party file host.
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/deploy/openlist?utm_campaign=openlist)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/deploy/openlist-1?utm_campaign=openlist-1)
 
 ![OpenList upload dialog](assets/openlist-upload.png)
 
