@@ -1,8 +1,8 @@
 [![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/deploy/openlist?utm_campaign=openlist)
 
-![OpenList file browser showing the pre-created Files storage with a test file](https://raw.githubusercontent.com/INAPP-Mobile/openlist/main/assets/openlist-files.png)
+![OpenList upload dialog](https://raw.githubusercontent.com/INAPP-Mobile/openlist/main/assets/openlist-upload.png)
 
-*OpenList file browser — screenshot captured from this template's own deployment during end-to-end testing, showing the pre-created Files storage with test data.*
+*OpenList's upload dialog — upstream screenshot from the OpenList project documentation (OpenList-Docs, `public/img/config/side/upload-modal-en.png`), showing Stream upload, folder/file pickers, and task options. The live file-browser UI was verified rendering during end-to-end testing of this template's own deployment.*
 
 # Deploy and Host
 
